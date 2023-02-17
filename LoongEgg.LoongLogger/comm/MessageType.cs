@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-/* 
+﻿/* 
  | 个人微信：InnerGeeker
  | 联系邮箱：LoongEgg@163.com 
  | 创建时间：2020/4/9 20:11:17
@@ -20,28 +14,38 @@ namespace LoongEgg.LoongLogger
     public enum MessageType
     {
         /// <summary>
+        /// 跟踪
+        /// </summary>
+        Trace = 0,
+
+        /// <summary>
         /// 调试信息
         /// </summary>
-        Debug = 0,
+        Debug = 1,
 
         /// <summary>
         /// 一般信息
         /// </summary>
-        Infor = 1,
-        
+        Infor = 2,
+
         /// <summary>
-        /// 关键信息
+        /// 警告
         /// </summary>
-        Crtcl = 2,
+        Warn = 3,
 
         /// <summary>
         /// 错误
         /// </summary>
-        Error = 2,
-         
+        Error = 4,
+
         /// <summary>
-        /// 崩溃
+        /// 致命
         /// </summary>
-        Fatal = 3
+        Fatal = 5,
+
+        /// <summary>
+        /// 关键信息
+        /// </summary>
+        Critical = 6,
     }
 }

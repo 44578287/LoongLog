@@ -42,6 +42,8 @@ namespace LoongEgg.LoongLogger
         ///     <param name="callerName">调用方法的名字</param>
         ///     <param name="fileName">调用的文件名</param>
         ///     <param name="line">调用代码所在行</param>
+        ///     <param name="TaskName">任务名</param>
+        ///     <param name="TaskID">任务ID</param>
         /// <returns>格式化后的日志消息</returns>
         public static string FormatMessage(
             MessageType type,
@@ -49,14 +51,24 @@ namespace LoongEgg.LoongLogger
             bool isDetailMode,
             string callerName,
             string fileName,
-            int line) {
+            int line,
+            string TaskName = null,
+            string TaskID = null) {
 
             StringBuilder msg = new StringBuilder();
             msg.Append(DateTime.Now.ToString() + " ");
-            msg.Append($"[ {type.ToString()} ] -> ");
+            
+            msg.Append($"[ {type.ToString()} ".PadRight(8, ' ')+ "]");
+
+            if (TaskID != null)
+                msg.Append($"[{TaskID}]");
+            msg.Append(" -> ");
+
+            if (TaskName != null)
+                msg.Append($"[{TaskName}]");
 
             if (isDetailMode)  
-                msg.Append($"{Path.GetFileName(fileName)} > {callerName}() > in line[{line.ToString().PadLeft(3, ' ')}]: "); 
+                msg.Append($"{Path.GetFileName(fileName)} > {callerName}() > in line[{line.ToString().PadLeft(3, ' ')}]: ");
 
             msg.Append(message); 
             return msg.ToString();

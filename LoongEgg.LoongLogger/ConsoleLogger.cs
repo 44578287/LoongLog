@@ -69,27 +69,44 @@ namespace LoongEgg.LoongLogger
             if ((int)type < (int)Level)
                 return false;
 
+            var BoldColor = Console.BackgroundColor;
             var oldColor = Console.ForegroundColor;
-
+            
             switch (type) {
-                case MessageType.Debug:
+                case MessageType.Trace://追踪
+                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    break;
+
+                case MessageType.Debug://调试
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     break;
 
-                case MessageType.Infor:
+                case MessageType.Infor://一般
                     Console.ForegroundColor = ConsoleColor.DarkCyan;
                     break;
-                     
-                case MessageType.Error:
+
+                case MessageType.Warn://警告
                     Console.ForegroundColor = ConsoleColor.DarkYellow;
                     break;
 
-                case MessageType.Fatal:
+                case MessageType.Error://错误
                     Console.ForegroundColor = ConsoleColor.Red;
-                    break; 
+                    break;
+
+                case MessageType.Fatal://致命
+                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    break;
+
+                case MessageType.Critical://关键
+                    Console.BackgroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
             }
 
             Console.WriteLine(fullMessage);
+            Console.BackgroundColor = BoldColor;
             Console.ForegroundColor = oldColor;
             return true;
         }

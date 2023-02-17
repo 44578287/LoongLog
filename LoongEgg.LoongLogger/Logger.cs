@@ -69,7 +69,7 @@ namespace LoongEgg.LoongLogger
                 + "ck呵呵 QQ:2407896713 mail:g9964957@gmail.com".ToContent2(120)
                 + "  ".ToContent2(120)
                 + "".ToHeader(120),
-                true);
+                false);
         }
 
         // TODO: 09-C 销毁Logger
@@ -99,7 +99,7 @@ namespace LoongEgg.LoongLogger
                 + "ck呵呵 QQ:2407896713 mail:g9964957@gmail.com".ToContent2(120)
                 + "  ".ToContent2(120)
                 + " Good  Luck ".ToHeader(120),
-                true);
+                false);
             Loggers.Clear();
         }
 
@@ -115,6 +115,8 @@ namespace LoongEgg.LoongLogger
         ///     <param name="callerName">调用的方法的名字</param>
         ///     <param name="fileName">调用方法所在的文件名</param>
         ///     <param name="line">调用代码所在行</param>
+        ///     <param name="TaskName">任务名</param>
+        ///     <param name="TaskID">任务ID</param>
         /// <returns>[true]->打印成功</returns>
         private static bool WriteLine
             (
@@ -123,7 +125,9 @@ namespace LoongEgg.LoongLogger
                 bool isDetailMode,
                 string callerName,
                 string fileName,
-                int line
+                int line,
+                string TaskName = null,
+                string TaskID = null
             )
         {
             bool isWrited = false;
@@ -131,7 +135,7 @@ namespace LoongEgg.LoongLogger
             // TODO: 2020-04-26 增加了线程锁
             lock (_Lock)
             {
-                string msg = BaseLogger.FormatMessage(type, message, isDetailMode, callerName, fileName, line);
+                string msg = BaseLogger.FormatMessage(type, message, isDetailMode, callerName, fileName, line, TaskName, TaskID);
 
                 if (Loggers.Any())
                 {
@@ -143,6 +147,28 @@ namespace LoongEgg.LoongLogger
         }
 
         /// <summary>
+        /// 打印一条新的追踪信息
+        /// </summary>
+        /// <param name="message">消息内容</param>
+        /// <param name="isDetailMode">详细模式？</param>
+        /// <param name="callerName">调用的方法的名字</param>
+        /// <param name="fileName">调用方法所在的文件名</param>
+        /// <param name="line">调用代码所在行</param>
+        /// <param name="TaskName">任务名</param>
+        /// <param name="TaskID">任务ID</param>
+        /// <returns>[true]->打印成功</returns>
+        public static bool WriteTrace
+            (
+                string message,
+                bool isDetailMode = true,
+                [CallerMemberName] string callerName = null,
+                [CallerFilePath] string fileName = null,
+                [CallerLineNumber] int line = 0,
+                string TaskName = null,
+                string TaskID = null
+            ) => WriteLine(MessageType.Trace, message, isDetailMode, callerName, fileName, line, TaskName, TaskID);
+
+        /// <summary>
         /// 打印一条新的调试信息
         /// </summary>
         /// <param name="message">消息内容</param>
@@ -150,6 +176,8 @@ namespace LoongEgg.LoongLogger
         /// <param name="callerName">调用的方法的名字</param>
         /// <param name="fileName">调用方法所在的文件名</param>
         /// <param name="line">调用代码所在行</param>
+        /// <param name="TaskName">任务名</param>
+        /// <param name="TaskID">任务ID</param>
         /// <returns>[true]->打印成功</returns>
         public static bool WriteDebug
             (
@@ -157,8 +185,10 @@ namespace LoongEgg.LoongLogger
                 bool isDetailMode = false,
                 [CallerMemberName] string callerName = null,
                 [CallerFilePath] string fileName = null,
-                [CallerLineNumber] int line = 0
-            ) => WriteLine(MessageType.Debug, message, isDetailMode, callerName, fileName, line);
+                [CallerLineNumber] int line = 0,
+                string TaskName = null,
+                string TaskID = null
+            ) => WriteLine(MessageType.Debug, message, isDetailMode, callerName, fileName, line, TaskName, TaskID);
 
         /// <summary>
         /// 打印一条新的一般信息
@@ -168,6 +198,8 @@ namespace LoongEgg.LoongLogger
         /// <param name="callerName">调用的方法的名字</param>
         /// <param name="fileName">调用方法所在的文件名</param>
         /// <param name="line">调用代码所在行</param>
+        /// <param name="TaskName">任务名</param>
+        /// <param name="TaskID">任务ID</param>
         /// <returns>[true]->打印成功</returns>
         public static bool WriteInfor
             (
@@ -175,8 +207,32 @@ namespace LoongEgg.LoongLogger
                 bool isDetailMode = false,
                 [CallerMemberName] string callerName = null,
                 [CallerFilePath] string fileName = null,
-                [CallerLineNumber] int line = 0
-            ) => WriteLine(MessageType.Infor, message, isDetailMode, callerName, fileName, line);
+                [CallerLineNumber] int line = 0,
+                string TaskName = null,
+                string TaskID = null
+            ) => WriteLine(MessageType.Infor, message, isDetailMode, callerName, fileName, line, TaskName, TaskID);
+
+        /// <summary>
+        /// 打印一条新的警告信息
+        /// </summary>
+        /// <param name="message">消息内容</param>
+        /// <param name="isDetailMode">详细模式？</param>
+        /// <param name="callerName">调用的方法的名字</param>
+        /// <param name="fileName">调用方法所在的文件名</param>
+        /// <param name="line">调用代码所在行</param>
+        /// <param name="TaskName">任务名</param>
+        /// <param name="TaskID">任务ID</param>
+        /// <returns>[true]->打印成功</returns>
+        public static bool WriteWarn
+            (
+                string message,
+                bool isDetailMode = false,
+                [CallerMemberName] string callerName = null,
+                [CallerFilePath] string fileName = null,
+                [CallerLineNumber] int line = 0,
+                string TaskName = null,
+                string TaskID = null
+            ) => WriteLine(MessageType.Warn, message, isDetailMode, callerName, fileName, line, TaskName, TaskID);
 
         /// <summary>
         /// 打印一条新的故障信息
@@ -186,6 +242,8 @@ namespace LoongEgg.LoongLogger
         /// <param name="callerName">调用的方法的名字</param>
         /// <param name="fileName">调用方法所在的文件名</param>
         /// <param name="line">调用代码所在行</param>
+        /// <param name="TaskName">任务名</param>
+        /// <param name="TaskID">任务ID</param>
         /// <returns>[true]->打印成功</returns>
         public static bool WriteError
             (
@@ -193,26 +251,10 @@ namespace LoongEgg.LoongLogger
                 bool isDetailMode = true,
                 [CallerMemberName] string callerName = null,
                 [CallerFilePath] string fileName = null,
-                [CallerLineNumber] int line = 0
-            ) => WriteLine(MessageType.Error, message, isDetailMode, callerName, fileName, line);
-
-        /// <summary>
-        /// 打印一条新的关键信息
-        /// </summary>
-        /// <param name="message">消息内容</param>
-        /// <param name="isDetailMode">详细模式？</param>
-        /// <param name="callerName">调用的方法的名字</param>
-        /// <param name="fileName">调用方法所在的文件名</param>
-        /// <param name="line">调用代码所在行</param>
-        /// <returns>[true]->打印成功</returns>
-        public static bool WriteCritical
-            (
-                string message,
-                bool isDetailMode = true,
-                [CallerMemberName] string callerName = null,
-                [CallerFilePath] string fileName = null,
-                [CallerLineNumber] int line = 0
-            ) => WriteLine(MessageType.Crtcl, message, isDetailMode, callerName, fileName, line);
+                [CallerLineNumber] int line = 0,
+                string TaskName = null,
+                string TaskID = null
+            ) => WriteLine(MessageType.Error, message, isDetailMode, callerName, fileName, line, TaskName, TaskID);
 
         /// <summary>
         /// 打印一条新的崩溃信息
@@ -222,6 +264,8 @@ namespace LoongEgg.LoongLogger
         /// <param name="callerName">调用的方法的名字</param>
         /// <param name="fileName">调用方法所在的文件名</param>
         /// <param name="line">调用代码所在行</param>
+        /// <param name="TaskName">任务名</param>
+        /// <param name="TaskID">任务ID</param>
         /// <returns>[true]->打印成功</returns>
         public static bool WriteFatal
            (
@@ -229,8 +273,32 @@ namespace LoongEgg.LoongLogger
                bool isDetailMode = true,
                [CallerMemberName] string callerName = null,
                [CallerFilePath] string fileName = null,
-               [CallerLineNumber] int line = 0
-            ) => WriteLine(MessageType.Fatal, message, isDetailMode, callerName, fileName, line);
+               [CallerLineNumber] int line = 0,
+               string TaskName = null,
+               string TaskID = null
+            ) => WriteLine(MessageType.Fatal, message, isDetailMode, callerName, fileName, line, TaskName, TaskID);
+
+        /// <summary>
+        /// 打印一条新的关键信息
+        /// </summary>
+        /// <param name="message">消息内容</param>
+        /// <param name="isDetailMode">详细模式？</param>
+        /// <param name="callerName">调用的方法的名字</param>
+        /// <param name="fileName">调用方法所在的文件名</param>
+        /// <param name="line">调用代码所在行</param>
+        /// <param name="TaskName">任务名</param>
+        /// <param name="TaskID">任务ID</param>
+        /// <returns>[true]->打印成功</returns>
+        public static bool WriteCritical
+            (
+                string message,
+                bool isDetailMode = true,
+                [CallerMemberName] string callerName = null,
+                [CallerFilePath] string fileName = null,
+                [CallerLineNumber] int line = 0,
+                string TaskName = null,
+                string TaskID = null
+            ) => WriteLine(MessageType.Critical, message, isDetailMode, callerName, fileName, line, TaskName, TaskID);
 
     }
 }

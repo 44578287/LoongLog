@@ -24,6 +24,8 @@ namespace LoongLog
             Logger.WriteError("这是error ...", TaskName: "error", TaskID: YitIdHelper.NextId().ToString());
             Logger.WriteFatal("这是fatal ...", TaskName: "fatal", TaskID: YitIdHelper.NextId().ToString());
             Logger.WriteCritical("这是Critical ...", TaskName: "Critical", TaskID: YitIdHelper.NextId().ToString());
+            Console.WriteLine("Hello World!");
+            Console.WriteLine("Hello World!");
             // 注销logger
             Logger.Disable();
 

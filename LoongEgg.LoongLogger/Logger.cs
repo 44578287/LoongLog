@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -36,6 +37,7 @@ namespace LoongEgg.LoongLogger
         /// <param name="type">需要开启的Logger类型，可以使用“|”位域操作</param>
         /// <param name="level">开启的Logger的级别</param> 
         /// <param name="logPath">指定log存放位置</param> 
+        /// <param name="maxCapacity">最大日志数量</param> 
         /// <example>
         ///     // 开启调试输出和控制台的Logger，消息级别为Error
         ///     LoggerManager.Enable(LoggerType.Debug | LoggerType.Console,  LoggerLevel.Error);
@@ -43,7 +45,7 @@ namespace LoongEgg.LoongLogger
         /// <code>
         ///     LoggerManager.Enable(LoggerType.Debug | LoggerType.Console,  LoggerLevel.Error);
         /// </code>
-        public static void Enable(LoggerType type, LoggerLevel level = LoggerLevel.Debug, string logPath = null)
+        public static void Enable(LoggerType type, LoggerLevel level = LoggerLevel.Debug, string logPath = null, int maxCapacity = 100)
         {
             Loggers.Clear();
 
@@ -58,6 +60,11 @@ namespace LoongEgg.LoongLogger
                 Loggers.Add(new FileLogger(logPath, level: level));
                 //WriteCritical("Logger File is Created... Check at this path: [ROOT_of_Your_Application]/log/", false);
             }
+
+            if (type.HasFlag(LoggerType.Memory))
+            {
+                Loggers.Add(new MemoryLogger(level,maxCapacity));
+            }    
 
             WriteInfor(
                 //Environment.NewLine
@@ -78,16 +85,17 @@ namespace LoongEgg.LoongLogger
         /// </summary>
         public static void Disable()
         {
-            Loggers.ForEach(
-                log => {
-                    if (log.GetType() == typeof(FileLogger))
-                    {
-                        //WriteInfor("", false);
-                        //WriteCritical("Logger File is Saved... Check at this path: [ROOT_of_Your_Application]/log/", true);
-                    }
+            //Loggers.ForEach(
+            //    log =>
+            //    {
+            //        if (log.GetType() == typeof(FileLogger))
+            //        {
+            //            WriteInfor("", false);
+            //            WriteCritical("Logger File is Saved... Check at this path: [ROOT_of_Your_Application]/log/", true);
+            //        }
 
-                }
-            );
+            //    }
+            //);
             WriteInfor(
                 /*Environment.NewLine
                 +*/
@@ -104,6 +112,39 @@ namespace LoongEgg.LoongLogger
         }
 
         private static readonly object _Lock = new object();
+
+        /// <summary>
+        /// 获取所有的日志
+        /// </summary>
+        /// <returns></returns>
+        public static List<Log> GetLogs() => MemoryLogger.GetAllLogs();
+
+        /// <summary>
+        /// 获取指定类型的日志
+        /// </summary>
+        /// <param name="type">日志等级</param>
+        /// <returns>匹配的日志列表</returns>
+        public static List<Log> GetLogsByType(MessageType type) => MemoryLogger.GetLogsByType(type);
+
+        /// <summary>
+        /// 按时间范围筛选日志
+        /// </summary>
+        /// <param name="startTime">起始时间</param>
+        /// <param name="endTime">结束时间</param>
+        /// <returns>匹配的日志列表</returns>
+        public static List<Log> GetLogsByTimeRange(DateTime startTime, DateTime endTime) => MemoryLogger.GetLogsByTimeRange(startTime, endTime);
+
+        /// <summary>
+        /// 按调用方法名筛选日志
+        /// </summary>
+        /// <param name="callerName">调用方法名</param>
+        /// <returns>匹配的日志列表</returns>
+        public static List<Log> GetLogsByCallerName(string callerName) => MemoryLogger.GetLogsByCallerName(callerName);
+
+        /// <summary>
+        /// 清空所有的日志
+        /// </summary>
+        public static void ClearLogs() => MemoryLogger.ClearLogs();
 
         // TODO: 09-D 打印日志 WriteDebug, WriteInfo, WriteError, WriteFatal
         /// <summary>
@@ -140,7 +181,17 @@ namespace LoongEgg.LoongLogger
                 if (Loggers.Any())
                 {
                     isWrited = true;
-                    Loggers.ForEach(logger => isWrited &= logger.WriteLine(msg, type));
+                    Loggers.ForEach(logger => 
+                    {
+                        if (logger.GetType() == typeof(MemoryLogger))
+                        {
+                            var MemoryLogger = (MemoryLogger)logger;
+
+                            isWrited &= MemoryLogger.WriteLine(type, message, callerName, fileName, line);
+                        }
+                        else
+                            isWrited &= logger.WriteLine(msg, type);
+                    });
                 }
             }
             return isWrited;

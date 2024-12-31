@@ -12,7 +12,7 @@ namespace LoongLog
         static void Main(string[] args) {
 
             // 激活Logger
-            Logger.Enable(LoggerType.Console | LoggerType.Debug | LoggerType.File, LoggerLevel.Debug);
+            Logger.Enable(LoggerType.Console | LoggerType.Debug | LoggerType.File | LoggerType.Memory, LoggerLevel.Debug);
 
             var options = new IdGeneratorOptions(1);
             YitIdHelper.SetIdGenerator(options);
@@ -26,6 +26,7 @@ namespace LoongLog
             Logger.WriteCritical("这是Critical ...", TaskName: "Critical", TaskID: YitIdHelper.NextId().ToString());
             Console.WriteLine("Hello World!");
             Console.WriteLine("Hello World!");
+            var data = Logger.GetLogs();
             // 注销logger
             Logger.Disable();
 

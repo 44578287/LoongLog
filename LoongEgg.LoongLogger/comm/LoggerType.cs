@@ -35,6 +35,11 @@ namespace LoongEgg.LoongLogger
         /// <summary>
         /// 文件版
         /// </summary>
-        File = 0x0100  // 或者使用4， 即二进制的0100
+        File = 0x0100,  // 或者使用4， 即二进制的0100
+
+        /// <summary>
+        /// 内存版
+        /// </summary>
+        Memory = 0x1000 // 或者使用8， 即二进制的1000
     }
 }

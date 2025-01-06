@@ -17,6 +17,10 @@ namespace LoongLog
             var options = new IdGeneratorOptions(1);
             YitIdHelper.SetIdGenerator(options);
 
+            Logger.OnLogChanged += (log) =>
+            {
+                Console.WriteLine($"[{log.Time:yyyy-MM-dd HH:mm:ss}] [{log.Type}] {log.Message}");
+            };
             Logger.WriteTrace("这是Trace", TaskName: "Trace", TaskID: YitIdHelper.NextId().ToString());
             Logger.WriteDebug("这是debug", TaskName: "debug", TaskID: YitIdHelper.NextId().ToString());
             Logger.WriteInfor("这是infor ...", TaskName: "infor", TaskID: YitIdHelper.NextId().ToString());

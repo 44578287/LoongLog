@@ -114,6 +114,15 @@ namespace LoongEgg.LoongLogger
         private static readonly object _Lock = new object();
 
         /// <summary>
+        /// 日志变化事件
+        /// </summary>
+        public static Action<Log> OnLogChanged 
+        {
+            get => MemoryLogger.OnLogChanged;
+            set => MemoryLogger.OnLogChanged = value;
+        }
+
+        /// <summary>
         /// 获取所有的日志
         /// </summary>
         /// <returns></returns>

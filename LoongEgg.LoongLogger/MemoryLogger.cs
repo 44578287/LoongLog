@@ -18,6 +18,10 @@ namespace LoongEgg.LoongLogger
         private static bool _isBufferFull = false; // 是否缓冲区已满
         private static int _capacity;    // 最大容量
 
+        /// <summary>
+        /// 日志变化事件
+        /// </summary>
+        public static Action<Log> OnLogChanged;
 
         /// <summary>
         /// 
@@ -76,6 +80,8 @@ namespace LoongEgg.LoongLogger
             _writeIndex = (_writeIndex + 1) % _capacity; // 更新写入索引
             if (_writeIndex == 0)
                 _isBufferFull = true; // 缓冲区写满后标记为满
+
+            OnLogChanged?.Invoke(log); // 触发日志变化事件
 
             return true;
         }

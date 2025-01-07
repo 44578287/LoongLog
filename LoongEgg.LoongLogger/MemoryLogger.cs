@@ -72,7 +72,7 @@ namespace LoongEgg.LoongLogger
                 Type = type,
                 Message = message,
                 CallerName = callerName,
-                FileName = fileName,
+                FileName = Path.GetFileName(fileName),
                 Line = line
             };
 
